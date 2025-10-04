@@ -1,1 +1,4 @@
+lambda_package/
+*.zip
+.DS_Store
 .env
