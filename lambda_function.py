@@ -2,7 +2,7 @@ import requests
 import os
 import json
 import datetime
-import psycopg2
+import pg8000
 
 DB_HOST = os.environ['DB_HOST']
 DB_NAME = os.environ['DB_NAME']
@@ -10,7 +10,7 @@ DB_USER = os.environ['DB_USER']
 DB_PASSWORD = os.environ['DB_PASSWORD']
 DB_PORT = os.environ['DB_PORT']
 
-conn = psycopg2.connect(
+conn = pg8000.connect(
 host=DB_HOST,
 database=DB_NAME,
 user=DB_USER,
