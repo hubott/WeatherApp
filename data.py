@@ -44,7 +44,9 @@ INSERT INTO hourly_weather (
 	wind_gust
 )
 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-ON CONFLICT (fetched_at, forecast_time) DO NOTHING
+ON CONFLICT (fetched_at, forecast_time) DO UPDATE SET
+    temperature = EXCLUDED.temperature,
+    feels_like = EXCLUDED.feels_like
 """
 
 for i in range(len(response['hourly'])):
@@ -53,11 +55,11 @@ for i in range(len(response['hourly'])):
     forecast_time_local = forecast_time_utc.astimezone()  # Convert to local timezone
     clouds = response['hourly'][i]['clouds']
     dew_point = response['hourly'][i]['dew_point']
-    feels_like = response['hourly'][i]['feels_like']
+    feels_like = int(response['hourly'][i]['feels_like']) - 273.15  # Convert from Kelvin to Celsius
     humidity = response['hourly'][i]['humidity']
     pop = response['hourly'][i]['pop']
     pressure = response['hourly'][i]['pressure']
-    temperature = response['hourly'][i]['temp']
+    temperature = int(response['hourly'][i]['temp']) - 273.15  # Convert from Kelvin to Celsius
     UVI = response['hourly'][i]['uvi']
     visibility = response['hourly'][i]['visibility']
     weather = response['hourly'][i]['weather'][0]['description']
