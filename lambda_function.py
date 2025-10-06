@@ -21,9 +21,12 @@ cur = conn.cursor()
 
 def lambda_handler(event, context):
     API_KEY = os.environ['OPENWEATHER_API_KEY']
-    melbourne_lat = 37.81
-    melbourne_lon = 144.96
-    URL = f'https://api.openweathermap.org/data/3.0/onecall?lat={melbourne_lat}&lon={melbourne_lon}&appid={API_KEY}'
+    cityName = "Melbourne"
+    Coords = f"http://api.openweathermap.org/geo/1.0/direct?q={cityName}&appid={API_KEY}"
+    coordReponse = requests.get(Coords).json()
+    lat = coordReponse[0]['lat']
+    lon = coordReponse[0]['lon']
+    URL = f'https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&appid={API_KEY}'
     response = requests.get(URL).json()
     fetched_at = datetime.datetime.now()
 
@@ -57,11 +60,11 @@ def lambda_handler(event, context):
         forecast_time_local = forecast_time_utc.astimezone()  # Convert to local timezone
         clouds = response['hourly'][i]['clouds']
         dew_point = response['hourly'][i]['dew_point']
-        feels_like = int(response['hourly'][i]['feels_like']) - 273.15  # Convert from Kelvin to Celsius
+        feels_like = response['hourly'][i]['feels_like'] - 273.15  # Convert from Kelvin to Celsius
         humidity = response['hourly'][i]['humidity']
         pop = response['hourly'][i]['pop']
         pressure = response['hourly'][i]['pressure']
-        temperature = int(response['hourly'][i]['temp']) - 273.15  # Convert from Kelvin to Celsius
+        temperature = response['hourly'][i]['temp'] - 273.15  # Convert from Kelvin to Celsius
         UVI = response['hourly'][i]['uvi']
         visibility = response['hourly'][i]['visibility']
         weather = response['hourly'][i]['weather'][0]['description']

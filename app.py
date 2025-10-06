@@ -6,13 +6,17 @@ import datetime
 
 load_dotenv()
 API_KEY = os.getenv('OPENWEATHER_API_KEY')
-melbourne_lat = 37.81
-melbourne_lon = 144.96
-URL = f'https://api.openweathermap.org/data/3.0/onecall?lat={melbourne_lat}&lon={melbourne_lon}&appid={API_KEY}'
+cityName = "Melbourne"
+Coords_URL = f"http://api.openweathermap.org/geo/1.0/direct?q={cityName}&appid={API_KEY}"
+coordReponse = requests.get(Coords_URL).json()
+lat = coordReponse[0]['lat']
+lon = coordReponse[0]['lon']
+URL = f'https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&appid={API_KEY}&units=metric'
 
-fetched_at = datetime.datetime.now()
+fetched_at = datetime.datetime.now(datetime.timezone.utc)
 
 response = requests.get(URL).json()
+
 
 payload = {
     "fetched_at": fetched_at.isoformat(),

@@ -2,3 +2,7 @@ lambda_package/
 *.zip
 .DS_Store
 .env
+__pycache__/
+venv/
+eb_logs.txt
+weather-frontend/build/

@@ -1,9 +1,11 @@
 import json
 import datetime
+from datetime import timedelta
 import psycopg2
 from pprint import pprint
 import os
 from dotenv import load_dotenv
+import zoneinfo
 load_dotenv()
 
 with open("sample_response.json", "r") as f:
@@ -11,6 +13,14 @@ with open("sample_response.json", "r") as f:
 
 response = payload['data']
 fetched_at = datetime.datetime.fromisoformat(payload['fetched_at'])
+
+offset = response['timezone_offset']
+
+fetched_at = fetched_at + timedelta(seconds=offset)
+
+fetched_at_2 = datetime.datetime.now(tz=zoneinfo.ZoneInfo("Australia/Melbourne"))
+print(fetched_at_2)
+
 
 
 conn = psycopg2.connect(
@@ -52,14 +62,14 @@ ON CONFLICT (fetched_at, forecast_time) DO UPDATE SET
 for i in range(len(response['hourly'])):
     forecast_time = response['hourly'][i]['dt']
     forecast_time_utc = datetime.datetime.fromtimestamp(forecast_time, datetime.timezone.utc)
-    forecast_time_local = forecast_time_utc.astimezone()  # Convert to local timezone
+    forecast_time_local = forecast_time_utc + timedelta(seconds=offset)
     clouds = response['hourly'][i]['clouds']
     dew_point = response['hourly'][i]['dew_point']
-    feels_like = int(response['hourly'][i]['feels_like']) - 273.15  # Convert from Kelvin to Celsius
+    feels_like = response['hourly'][i]['feels_like'] 
     humidity = response['hourly'][i]['humidity']
     pop = response['hourly'][i]['pop']
     pressure = response['hourly'][i]['pressure']
-    temperature = int(response['hourly'][i]['temp']) - 273.15  # Convert from Kelvin to Celsius
+    temperature = response['hourly'][i]['temp'] 
     UVI = response['hourly'][i]['uvi']
     visibility = response['hourly'][i]['visibility']
     weather = response['hourly'][i]['weather'][0]['description']
