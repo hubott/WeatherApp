@@ -1,5 +1,5 @@
 # application.py
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import pg8000, os
 import os
 from flask_cors import CORS
@@ -18,6 +18,8 @@ app.logger.info(f"DB_USER={os.environ.get('DB_USER')}")
 
 
 
+
+
 def get_conn():
     return pg8000.connect(
         host=os.environ.get('DB_HOST'),
@@ -31,13 +33,22 @@ def get_conn():
 
 @app.route("/api/hourly")
 def get_hourly():
+    city = request.args.get("city", "Melbourne")
 
     # Get a new connection for each request to avoid stale connections
     conn = get_conn()
     cur = conn.cursor()
     # Query the most recent 48 hours of data, ensuring they are in order by forecast_time
-    cur.execute("SELECT * FROM hourly_weather ORDER BY fetched_at DESC, forecast_time ASC LIMIT 48")
+    cur.execute("SELECT * " \
+    "FROM hourly_weather " \
+    "WHERE city = %s " \
+    "ORDER BY fetched_at DESC, forecast_time ASC LIMIT 48", (city,))
     rows = cur.fetchall()
+    if not rows:
+        cur.close()
+        conn.close()
+        return jsonify({"error": f"No data found for city '{city}'"}), 404
+    
     data = []
     last_fetched = None
     #Append the appropriate that we want sent to our frontend
@@ -58,7 +69,7 @@ def get_hourly():
     # Return the data as JSON
     cur.close()
     conn.close()
-    return jsonify({"last_refreshed": last_fetched.isoformat(), "hourly": data})
+    return jsonify({"city": city, "last_refreshed": last_fetched.isoformat(), "hourly": data})
 
 # A simple health check endpoint
 @app.route("/")
