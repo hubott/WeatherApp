@@ -45,6 +45,9 @@ function CurrentWeatherCard({ weather }) {
         <div className="stats">
             <div className="stat"><div className="label">Humidity</div><div className="value">{weather.humidity}%</div></div>
             <div className="stat"><div className="label">Condition</div><div className="value">{weather.weather}</div></div>
+            <div className="stat"><div className="label">Clouds</div><div className="value">{weather.clouds}</div></div>
+            <div className="stat"><div className="label">UVI</div><div className="value">{weather.UVI}</div></div>
+            <div className="stat"><div className="label">Wind Speed</div><div className="value">{weather.wind_speed}</div></div>
         </div>
         </div>
     

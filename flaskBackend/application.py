@@ -46,13 +46,18 @@ def get_hourly():
             last_fetched = row[1]
         data.append({
             "forecast_time": row[2].isoformat(),
+            "clouds": row[3],
             "temperature": row[5],
             "feels_like": row[6],
             "humidity": row[7],
+            "UVI": row[10],
             "weather": row[12],
+            "wind_speed": row[13],
             "icon": row[16]
         })
     # Return the data as JSON
+    cur.close()
+    conn.close()
     return jsonify({"last_refreshed": last_fetched.isoformat(), "hourly": data})
 
 # A simple health check endpoint

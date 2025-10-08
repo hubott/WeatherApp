@@ -121,3 +121,20 @@ body {
   .stats { margin-left:0; width:100%; }
   .hourly .chart { height:300px; }
 }
+
+.graph-controls {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 0.5rem;
+}
+.graph-controls select {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #e9e9e9;
+}
+
+.graph-controls :hover{
+    cursor: pointer;
+}

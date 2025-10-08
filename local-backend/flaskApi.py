@@ -34,10 +34,13 @@ def get_hourly():
             "temperature": row[5],
             "feels_like": row[6],
             "humidity": row[7],
-            "weather": row[12]
+            "weather": row[12],
+            "icon": row[16]
         })
     print(last_fetched.isoformat())
     print("Returning", len(data), "records. Last fetched:", last_fetched)
+    cur.close()
+    conn.close()
     return jsonify({"last_refreshed": last_fetched.isoformat(), "hourly": data})
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001, debug=True)
